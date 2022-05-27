@@ -72,4 +72,11 @@ app.post('/checkId', (req, res) => {
     });
 });
 
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if(err) console.log(err);
+        res.redirect("./login");
+    });
+})
+
 module.exports = app;
