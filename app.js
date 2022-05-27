@@ -22,6 +22,10 @@ app.set("views", __dirname + "/views");
 app.engine("html", ejs.renderFile);
 app.set("view engine", "ejs");
 
+app.get("/", (req, res) => {
+    res.redirect("./login");
+})
+
 var port = 8090;
 var server = app.listen(port, (req, res) => {
     console.log(`server is running... port: ${port}`);
