@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twbs-pagination/1.4.2/jquery.twbsPagination.min.js"></script>
+<title>Document</title>
+<style type="text/css">
+.frame {
+	padding : 20px;
+}
+tbody tr:hover {
+	cursor: pointer;
+}
+body {
+	padding : 30px;
+}
+.paging-div {
+  padding: 15px 0 5px 10px;
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<h2>게시판</h2>
+
+<div align="center" class="frame">
+    <a style="float:right" href="./write">글쓰기</a>
+	<table class="table table-hover">
+		<col width="70">
+		<col width="600">
+		<col width="150">
+		<thead class="thead-dark">
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>작성자</th>
+			</tr>
+		</thead>
+        <tbody>
+
+        </tbody>
+	</table>
+	<br>
+    
+    <div class="paging-div">
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+	<div>
+		<select id="choice">
+			<option value="title">제목</option>
+			<option value="content">내용</option>
+			<option value="id">작성자</option>
+		</select>
+        <input type="text" id="search"/>
+		<button onclick="searchBtn()">검색</button>
+	</div>
+
+</div>
+</body>
+<script>
+    if('<%=choice%>' != '')
+        $("#choice").val("<%=choice%>").prop("selected", true);
+    if('<%=search%>' != '')
+        $("#search").val("<%=search%>");
+
+    $.ajax({
+        url: "./getAllPages",
+        type: "post",
+        data: {
+            choice: $("#choice").val(),
+            search: $("#search").val()
+        },
+        success: function(data) {
+            if(data.cnt > 0)
+                make_pagination(data.cnt);
+        },
+        error: function(err) {
+        }
+    });
+
+    function make_pagination(totalViews) {
+        let totalPages = totalViews / 10;
+        if(totalViews % 10 > 0) totalPages++;
+        $('#pagination').twbsPagination({
+            startPage: 1, //시작(현재) 페이지
+            totalPages: totalPages, //전체페이지
+            visiblePages : 10, //최대로 보여줄 페이지
+            first: "<span sria-hidden='true'>«</span>",
+            prev: "이전",
+            next: "다음",
+            last: "<span sria-hidden='true'>»</span>",
+            onPageClick: function(event, page) {
+                getPage(page);
+            }
+        })
+    }
+
+    function getPage(pageNumber) {
+        $.ajax({
+            url: "./bbslist",
+            type: "post",
+            data: {
+                choice: $("#choice").val(),
+                search: $("#search").val(),
+                pageNumber: pageNumber
+            },
+            success: function(data) {
+                template(data, pageNumber);
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+
+    function template(data, pageNumber) {
+        let tbody = $("tbody");
+        tbody.empty();
+        data.forEach((e, i) => {
+            let tr = document.createElement("tr");
+
+            let td = document.createElement("td");
+            let text = document.createTextNode((pageNumber - 1) * 10 + i + 1);
+            td.append(text);
+            tr.append(td);
+
+            td = document.createElement("td");
+            let blank = "\u00a0\u00a0\u00a0\u00a0";
+            let ts = "";
+            for(let i = 0; i < e.DEPTH; i++) {
+                ts += blank;
+                if(i == e.DEPTH - 1) {
+                    ts += '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-right" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.5 1.5A.5.5 0 0 0 1 2v4.8a2.5 2.5 0 0 0 2.5 2.5h9.793l-3.347 3.346a.5.5 0 0 0 .708.708l4.2-4.2a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 8.3H3.5A1.5 1.5 0 0 1 2 6.8V2a.5.5 0 0 0-.5-.5z"/></svg>\u00a0';
+                }
+            }
+            if(e.DEL == 1) {
+                text = ts + "삭제된 게시글입니다.";
+                td.style.cssText = "color:red;";
+            }else {
+                text = ts + e.TITLE;
+                tr.onclick = function() {
+                    location.href = `./detail?seq=${e.SEQ}`;
+                }
+            }
+            td.innerHTML = text;
+            tr.append(td);
+
+            td = document.createElement("td");
+            text = document.createTextNode(e.ID);
+            td.append(text);
+            tr.append(td);
+            
+            tr.addEventListener("click", () => {
+                location.href = `./detail?seq=${e.SEQ}`;
+            });
+            tbody.append(tr);
+        });
+    }
+
+    function searchBtn() {
+       location.href = `./bbslist?search=${$("#search").val()}&choice=${$("#choice").val()}`;
+    }
+    
+    
+
+</script>
+</html>
