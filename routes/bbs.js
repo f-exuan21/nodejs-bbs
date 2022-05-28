@@ -66,7 +66,7 @@ app.post("/getAllPages", (req, res) => {
         res.send({"cnt" : results[0].CNT})
     });
 
-    
+
 });
 
 app.get("/detail", (req, res) => {
@@ -77,7 +77,7 @@ app.get("/detail", (req, res) => {
 
     var formatSql1 = conn.format(sql1, params);
     var foramtSql2 = conn.format(sql2, params);
-    
+
     conn.query(foramtSql2 + formatSql1, params, (err, results, fields) => {
         if(err) console.log(err);
         if(results[1].length == 1){
@@ -96,7 +96,7 @@ app.get("/detail", (req, res) => {
 
 app.get("/write", (req, res) => {
     res.render("bbswrite.ejs", {id: req.session.member[0].ID})
-}); 
+});
 
 app.post("/write", (req, res) => {
     var sql = "INSERT INTO BBS(ID, REF, STEP, DEPTH, TITLE, CONTENT, WDATE, DEL, READCOUNT) \
@@ -158,8 +158,8 @@ app.post("/update", (req, res) => {
         }else {
             res.send({result: "NO"});
         }
-    }); 
-}); 
+    });
+});
 
 app.get("/answer", (req, res) => {
     var sql = "SELECT * FROM BBS WHERE SEQ = ? AND DEL = 0";
@@ -177,7 +177,7 @@ app.get("/answer", (req, res) => {
                 content: results[0].CONTENT,
                 loginId: req.session.member[0].ID
             });
-    }); 
+    });
 });
 
 app.post("/answer", (req, res) => {
@@ -198,7 +198,7 @@ app.post("/answer", (req, res) => {
     var params1 = [ req.body.seq, req.body.seq ];
     var params2 = [ req.session.member[0].ID, req.body.seq, req.body.seq, req.body.seq,
                     req.body.title, req.body.content ];
-    
+
     var formatSql1 = conn.format(sql1, params1);
     var formatSql2 = conn.format(sql2, params2);
 
