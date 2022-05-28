@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>Document</title>
 </head>
 <style type="text/css">
@@ -68,10 +68,10 @@
         </table>
         <button onclick="answerBbs(<%=seq%>)">답글</button>
         <button onclick="location.href='./bbslist'">목록</button>
-        
+
         <%if(loginId == id) {%>
         <button onclick="updateBbs(<%=seq%>)">수정</button>
-        <button onclick="deleteBbs(<%=seq%>)">삭제</button>	
+        <button onclick="deleteBbs(<%=seq%>)">삭제</button>
         <%}%>
 
         <br><br><br>
@@ -89,11 +89,11 @@
             <br><hr><br>
             <div class="comment">
             </div>
-            
+
         </div>
 
     </div>
-    
+
     <script>
 
         function comment_save(seq) {
@@ -142,24 +142,31 @@
                 var tr = `<div class="comment-list row">
                             <div class="col-sm-1"></div>
                             <span class="col-sm-1">${data[i].ID}</span>
-                            <div class="col-sm-8 comment-box" style="text-align: left;">${data[i].CONTENT}  <sub>(${new Date(data[i].WDATE).toLocaleDateString()})</sub></div>
+                            <div class="col-sm-8 comment-box" style="text-align: left;">`;
+				if(data[i].DEL == 1) {
+					tr += "<span style='color:red;'>삭제된 댓글입니다.</span>";
+				}else {
+					tr += `<span>${data[i].CONTENT}</span>`;
+				}
+					tr += `<sub>(${new Date(data[i].WDATE).toLocaleString()})</sub>
+							</div>
                             <div class="col-sm-1">`;
-                if(data[i].ID == loginID) {
+                if(data[i].ID == loginID && data[i].DEL == 0) {
                     tr += `<a href="javascript:deleteComment(${data[i].SEQ})">삭제</a>`;
                 }
                     tr += `</div>
                             <div class="col-sm-1"></div>
-                           </div> `;
+                            </div> `;
                 doc += tr;
             }
             $(".comment").empty();
             $(".comment").append(doc);
         }
-    
+
         function answerBbs(seq) {
             location.href = "./answer?seq=" + seq;
         }
-        
+
         function deleteBbs(seq) {
             $.ajax({
                 url: "./delete",
@@ -180,7 +187,7 @@
                 }
             });
         }
-        
+
         function updateBbs(seq) {
             location.href = "./update?seq=" + seq;
         }
@@ -206,6 +213,6 @@
 
         get_comment_list(<%=seq%>);
     </script>
-    
+
     </body>
 </html>

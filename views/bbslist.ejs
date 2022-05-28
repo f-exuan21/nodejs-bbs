@@ -21,11 +21,11 @@ body {
 	padding : 30px;
 }
 .paging-div {
-  padding: 15px 0 5px 10px;
-  display: table;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
+	padding: 15px 0 5px 10px;
+	display: table;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
 }
 </style>
 </head>
@@ -51,7 +51,7 @@ body {
         </tbody>
 	</table>
 	<br>
-    
+
     <div class="paging-div">
         <div class="pagination" id="pagination"></div>
     </div>
@@ -160,7 +160,7 @@ body {
             text = document.createTextNode(e.ID);
             td.append(text);
             tr.append(td);
-            
+
             tr.addEventListener("click", () => {
                 location.href = `./detail?seq=${e.SEQ}`;
             });
@@ -171,8 +171,8 @@ body {
     function searchBtn() {
        location.href = `./bbslist?search=${$("#search").val()}&choice=${$("#choice").val()}`;
     }
-    
-    
+
+
 
 </script>
 </html>

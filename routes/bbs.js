@@ -5,7 +5,6 @@ var app = express.Router();
 var db_config = require('../config/database');
 var conn = db_config.init();
 
-
 // parameter를 받기 위한 설정
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded( {extended:true} ));
@@ -227,7 +226,7 @@ app.post("/save-comment", (req, res) => {
 });
 
 app.post("/get-comment-list", (req, res) => {
-    var sql = "SELECT * FROM COMMENT WHERE BOARD_SEQ = ? AND DEL = 0 ORDER BY WDATE DESC";
+    var sql = "SELECT * FROM COMMENT WHERE BOARD_SEQ = ? ORDER BY WDATE DESC";
     var params = [ req.body.board_seq ];
 
     conn.query(sql, params, (err, results, _) => {
