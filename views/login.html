@@ -57,7 +57,7 @@
 		$("#id").val(user_id);
 		$("#chk_save_id").attr("checked", "checked");
 	}
-	
+
 	//아이디 저장
 	$("#chk_save_id").click(function(){
 		setCookie();
@@ -89,7 +89,7 @@
             success: function(data) {
                 if(data.result == "OK") {
 					setCookie();
-                    alert(`${data.member[0].NAME}님 환영합니다.`);
+                    alert(`${data.member.NAME}님 환영합니다.`);
                     location.href = "./bbslist?search=&choice=";
                 }else {
                     alert("아이디와 비밀번호를 확인해주세요.");

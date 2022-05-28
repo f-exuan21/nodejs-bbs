@@ -32,11 +32,11 @@ app.post('/login', (req, res) => {
         if(results.length == 0) {
             res.send({result: "NO"});
         }else {
-            req.session.member = results;
+            req.session.member = results[0];
             res.send({result: "OK",
-                    member: results});
+                    member: results[0]});
         }
-    }); 
+    });
 });
 
 app.get('/regi', (req, res) => {

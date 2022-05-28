@@ -88,19 +88,19 @@ app.get("/detail", (req, res) => {
                 readcount: results[1][0].READCOUNT,
                 id: results[1][0].ID,
                 content: results[1][0].CONTENT,
-                loginId: req.session.member[0].ID});
+                loginId: req.session.member.ID});
             }
     });
 })
 
 app.get("/write", (req, res) => {
-    res.render("bbswrite.ejs", {id: req.session.member[0].ID})
+    res.render("bbswrite.ejs", {id: req.session.member.ID})
 });
 
 app.post("/write", (req, res) => {
     var sql = "INSERT INTO BBS(ID, REF, STEP, DEPTH, TITLE, CONTENT, WDATE, DEL, READCOUNT) \
                VALUES(?, (SELECT IFNULL(MAX(REF), 0)+1 FROM BBS a), 0, 0, ?, ?, NOW(), 0, 0)";
-    var params = [ req.session.member[0].ID, req.body.title, req.body.content ];
+    var params = [ req.session.member.ID, req.body.title, req.body.content ];
 
     conn.query(sql, params, (err, results, fields) => {
         if(err) console.log(err);
@@ -114,7 +114,7 @@ app.post("/write", (req, res) => {
 
 app.post("/delete", (req, res) => {
     var sql = "UPDATE BBS SET DEL=1 WHERE ID = ? AND SEQ = ?";
-    var params = [ req.session.member[0].ID, req.body.seq ];
+    var params = [ req.session.member.ID, req.body.seq ];
 
     conn.query(sql, params, (err, results, _) => {
         if(err) console.log(err);
@@ -129,7 +129,7 @@ app.post("/delete", (req, res) => {
 
 app.get("/update", (req, res) => {
     var sql = "SELECT * FROM BBS WHERE SEQ = ? AND ID = ?";
-    var params = [ req.query.seq, req.session.member[0].ID ];
+    var params = [ req.query.seq, req.session.member.ID ];
 
     conn.query(sql, params, (err, results, _) => {
         if(err) console.log(err);
@@ -147,7 +147,7 @@ app.get("/update", (req, res) => {
 
 app.post("/update", (req, res) => {
     var sql = "UPDATE BBS SET TITLE = ?, CONTENT = ? WHERE ID = ? AND SEQ = ? AND DEL = 0";
-    var params = [ req.body.title, req.body.content, req.session.member[0].ID, req.body.seq ];
+    var params = [ req.body.title, req.body.content, req.session.member.ID, req.body.seq ];
 
     conn.query(sql, params, (err, results, _) => {
         if(err) console.log(err);
@@ -174,7 +174,7 @@ app.get("/answer", (req, res) => {
                 readcount: results[0].READCOUNT,
                 id: results[0].ID,
                 content: results[0].CONTENT,
-                loginId: req.session.member[0].ID
+                loginId: req.session.member.ID
             });
     });
 });
@@ -195,7 +195,7 @@ app.post("/answer", (req, res) => {
             +           "0, "
             +           "0);";
     var params1 = [ req.body.seq, req.body.seq ];
-    var params2 = [ req.session.member[0].ID, req.body.seq, req.body.seq, req.body.seq,
+    var params2 = [ req.session.member.ID, req.body.seq, req.body.seq, req.body.seq,
                     req.body.title, req.body.content ];
 
     var formatSql1 = conn.format(sql1, params1);
@@ -213,7 +213,7 @@ app.post("/answer", (req, res) => {
 app.post("/save-comment", (req, res) => {
     var sql = "INSERT INTO COMMENT(ID, BOARD_SEQ, CONTENT, DEL, WDATE) \
                VALUES (?, ?, ?, 0, NOW())";
-    var params = [ req.session.member[0].ID, req.body.board_seq, req.body.content ];
+    var params = [ req.session.member.ID, req.body.board_seq, req.body.content ];
 
     conn.query(sql, params, (err, results, _) => {
         if(err) console.log(err);
@@ -232,7 +232,7 @@ app.post("/get-comment-list", (req, res) => {
     conn.query(sql, params, (err, results, _) => {
         if(err) console.log(err);
         if(results.length > 0) {
-            res.send({result: "OK", datas: results, loginID: req.session.member[0].ID});
+            res.send({result: "OK", datas: results, loginID: req.session.member.ID});
         }else {
             res.send({result: "NO"});
         }
@@ -241,8 +241,8 @@ app.post("/get-comment-list", (req, res) => {
 
 app.post("/delete-comment", (req, res) => {
     var sql = "UPDATE COMMENT SET DEL = 1 WHERE SEQ = ? AND ID = ?";
-    console.log(req.body.seq, req.session.member[0].ID );
-    var params = [ req.body.seq, req.session.member[0].ID ];
+    console.log(req.body.seq, req.session.member.ID );
+    var params = [ req.body.seq, req.session.member.ID ];
 
     conn.query(sql, params, (err, results, _) => {
         if(err) console.log(err);
